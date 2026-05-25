@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TeacherTrack — Icon Picker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #f8fafc; --fg: #0f172a; --muted: #64748b; --border: #e2e8f0;
+    --brand: #4f46e5; --brand-light: #6366f1;
+    --red: #ef4444; --yellow: #facc15; --green: #22c55e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 24px; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+  header { max-width: 1200px; margin: 0 auto 28px; }
+  h1 { margin: 0 0 6px; font-size: 24px; letter-spacing: -0.01em; }
+  p.sub { margin: 0; color: var(--muted); font-size: 14px; }
+  .grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+  .tile {
+    background: #fff; border: 1px solid var(--border); border-radius: 16px;
+    padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 8px 24px rgba(15,23,42,0.04);
+    transition: transform .15s, border-color .15s;
+  }
+  .tile:hover { transform: translateY(-2px); border-color: var(--brand-light); }
+  .tile svg { width: 120px; height: 120px; display: block; }
+  .label { font-size: 12px; color: var(--muted); text-align: center; min-height: 28px; }
+  button {
+    border: 1px solid var(--border); background: #fff; color: var(--fg);
+    border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer;
+    transition: all .15s;
+  }
+  button:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .num { position: absolute; }
+  .tile { position: relative; }
+  .badge {
+    position: absolute; top: 8px; left: 10px;
+    font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .actions { display: flex; gap: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>TeacherTrack icon picker</h1>
+  <p class="sub">20 circular favicon candidates. Click <b>PNG</b> to download a 512×512 PNG, or <b>SVG</b> for the vector source. Pick one and tell me the number.</p>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const brand = '#4f46e5', brandLight = '#6366f1', red = '#ef4444', yellow = '#facc15', green = '#22c55e', dark = '#0f172a', white = '#ffffff';
+
+// Reusable graduation cap path centered at (cx, cy) with given half-width (hw).
+function cap(cx, cy, hw, fill, stroke, sw) {
+  const top = cy - hw * 0.42;
+  const mid = cy + hw * 0.0;
+  const baseY = cy + hw * 0.42;
+  const tasselX = cx + hw * 1.0;
+  return `
+    <path d="M ${cx - hw} ${mid} L ${cx} ${top} L ${cx + hw} ${mid} L ${cx} ${mid + hw * 0.42} Z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>
+    <path d="M ${cx - hw * 0.62} ${mid + hw * 0.18} V ${baseY} Q ${cx - hw * 0.62} ${baseY + hw * 0.22} ${cx} ${baseY + hw * 0.22} Q ${cx + hw * 0.62} ${baseY + hw * 0.22} ${cx + hw * 0.62} ${baseY} V ${mid + hw * 0.18}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"/>
+    <line x1="${tasselX}" y1="${mid}" x2="${tasselX}" y2="${mid + hw * 0.55}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>
+  `;
+}
+
+// Tri-color ring centered (cx, cy) radius r, stroke width sw.
+function triRing(cx, cy, r, sw, stroke) {
+  const C = 2 * Math.PI * r;
+  const seg = C / 3;
+  return `
+    <g stroke-width="${sw}" fill="none">
+      <circle cx="${cx}" cy="${cy}" r="${r}" stroke="${green}" stroke-dasharray="${seg} ${C}"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" stroke="${yellow}" stroke-dasharray="${seg} ${C}" transform="rotate(120 ${cx} ${cy})"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" stroke="${red}" stroke-dasharray="${seg} ${C}" transform="rotate(240 ${cx} ${cy})"/>
+    </g>
+    ${stroke ? `<circle cx="${cx}" cy="${cy}" r="${r + sw / 2}" fill="none" stroke="${stroke}" stroke-width="4"/>
+                <circle cx="${cx}" cy="${cy}" r="${r - sw / 2}" fill="none" stroke="${stroke}" stroke-width="4"/>` : ''}
+  `;
+}
+
+const icons = [
+  {
+    name: '1 · Tri-color ring',
+    svg: `<circle cx="256" cy="256" r="248" fill="${white}" stroke="${dark}" stroke-width="8"/>
+          ${triRing(256, 256, 180, 56, '')}`
+  },
+  {
+    name: '2 · Graduation cap',
+    svg: `<circle cx="256" cy="256" r="248" fill="${brand}"/>
+          <path d="M256 160 L420 220 L256 280 L92 220 Z" fill="${white}"/>
+          <path d="M180 250 V330 Q180 360 256 360 Q332 360 332 330 V250" fill="none" stroke="${white}" stroke-width="22"/>
+          <line x1="420" y1="220" x2="420" y2="320" stroke="${white}" stroke-width="14" stroke-linecap="round"/>`
+  },
+  {
+    name: '3 · Cap inside tri-ring (white bg)',
+    svg: `<circle cx="256" cy="256" r="248" fill="${white}" stroke="${dark}" stroke-width="8"/>
+          ${triRing(256, 256, 200, 36, '')}
+          ${cap(256, 256, 90, brand, dark, 8)}`
+  },
+  {
+    name: '4 · Cap inside tri-ring (indigo bg)',
+    svg: `<circle cx="256" cy="256" r="248" fill="${brand}"/>
+          ${triRing(256, 256, 200, 36, '')}
+          ${cap(256, 256, 90, white, dark, 6)}`
+  },
+  {
+    name: '5 · Indigo disc, tri-ring + cap',
+    svg: `<circle cx="256" cy="256" r="248" fill="${brand}"/>
+          ${triRing(256, 256, 215, 22, white)}
+          ${cap(256, 250, 110, white, dark, 6)}`
+  },
+  {
+    name: '6 · Thick tri-ring, big cap',
+    svg: `<circle cx="256" cy="256" r="248" fill="${white}" stroke="${dark}" stroke-width="10"/>
+          ${triRing(256, 256, 215, 56, dark)}
+          ${cap(256, 256, 105, brand, dark, 8)}`
+  },
+  {
+    name: '7 · Tri-arc base + cap',
+    svg: `<circle cx="256" cy="256" r="248" fill="${white}" stroke="${dark}" stroke-width="8"/>
+          ${cap(256, 200, 140, brand, dark, 10)}
+          <g fill="none" stroke-width="36" stroke-linecap="round">
+            <path d="M120 380 A 140 140 0 0 1 211 290" stroke="${red}"/>
+            <path d="M211 290 A 140 140 0 0 1 301 290" stroke="${yellow}"/>
+            <path d="M301 290 A 140 140 0 0 1 392 380" stroke="${green}"/>
+          </g>`
+  },
+  {
+    name: '8 · Cap with R/Y/G tassels',
+    svg: `<circle cx="256" cy="256" r="248" fill="${brand}"/>
+          ${cap(256, 256, 140, white, dark, 8)}
+          <g stroke-width="14" stroke-linecap="round">
+            <line x1="396" y1="256" x2="396" y2="340" stroke="${red}"/>
+            <line x1="416" y1="256" x2="416" y2="370" stroke="${yellow}"/>
+            <line x1="436" y1="256" x2="436" y2="340" stroke="${green}"/>
+          </g>`
+  },
+  {
+    name: '9 · Tri-segmented ring, small cap',
+    svg: `<circle cx="256" cy="256" r="248" fill="${white}" stroke="${dark}" stroke-width="6"/>
+          <g stroke="${dark}" stroke-width="6">
+            <path d="M256 56 A200 200 0 0 1 429 356 L368 320 A130 130 0 0 0 256 126 Z" fill="${green}"/>
+            <path d="M429 356 A200 200 0 0 1 83 356 L144 320 A130 130 0 0 0 368 320 Z" fill="${yellow}"/>
+            <path d="M83 356 A200 200 0 0 1 256 56 L256 126 A130 130 0 0 0 144 320 Z" fill="${red}"/>
+          </g>
+          ${cap(256, 256, 80, brand, white, 6)}`
+  },
+  {
+    name: '10 · Indigo cap on tri-arc smile',
+    svg: `<circle cx="256" cy="256" r="248" fill="${brand}"/>
+          ${cap(256, 220, 130, white, dark, 8)}
+          <g fill="none" stroke-width="32" stroke-linecap="butt">
+            <path d="M118 360 A150 150 0 0 1 213 263" stroke="${red}"/>
+            <path d="M213 263 A150 150 0 0 1 299 263" stroke="${yellow}"/>
+            <path d="M299 263 A150 150 0 0 1 394 360" stroke="${green}"/>
+          </g>`
+  },
+  {
+    name: '11 · Tri-ring halo over cap',
+    svg: `<circle cx="256" cy="256" r="248" fill="${white}" stroke="${dark}" stroke-width="8"/>
+          ${triRing(256, 180, 100, 24, dark)}
+          ${cap(256, 320, 130, brand, dark, 8)}`
+  },
+  {
+    name: '12 · Indigo cap + R/Y/G dots',
+    svg: `<circle cx="256" cy="256" r="248" fill="${brand}"/>
+          ${cap(256, 230, 140, white, dark, 8)}
+          <g stroke="${dark}" stroke-width="6">
+            <circle cx="170" cy="400" r="26" fill="${red}"/>
+            <circle cx="256" cy="400" r="26" fill="${yellow}"/>
+            <circle cx="342" cy="400" r="26" fill="${green}"/>
+          </g>`
+  },
+];
+
+function wrapSvg(inner) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">${inner}</svg>`;
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 0);
+}
+
+function downloadSvg(svgString, name) {
+  downloadBlob(new Blob([svgString], { type: 'image/svg+xml' }), `${name}.svg`);
+}
+
+async function downloadPng(svgString, name, size = 512) {
+  const img = new Image();
+  const blob = new Blob([svgString], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
+  const canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, size, size);
+  URL.revokeObjectURL(url);
+  canvas.toBlob(b => downloadBlob(b, `${name}.png`), 'image/png');
+}
+
+const grid = document.getElementById('grid');
+icons.forEach((ico, i) => {
+  const svgStr = wrapSvg(ico.svg);
+  const tile = document.createElement('div');
+  tile.className = 'tile';
+  tile.innerHTML = `
+    <div class="badge">#${i + 1}</div>
+    ${svgStr}
+    <div class="label">${ico.name}</div>
+    <div class="actions">
+      <button data-act="png">PNG</button>
+      <button data-act="svg">SVG</button>
+    </div>
+  `;
+  const slug = `teachertrack-icon-${String(i + 1).padStart(2, '0')}`;
+  tile.querySelector('[data-act=png]').onclick = () => downloadPng(svgStr, slug, 512);
+  tile.querySelector('[data-act=svg]').onclick = () => downloadSvg(svgStr, slug);
+  grid.appendChild(tile);
+});
+</script>
+</body>
+</html>

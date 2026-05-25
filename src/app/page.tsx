@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Qualification, Status, TeacherWithAssignments } from "@/lib/types";
 import { STATUS_LABEL } from "@/lib/types";
+import { TeacherGrid } from "@/components/TeacherGrid";
 
 type DashResp = { teachers: TeacherWithAssignments[]; qualifications: Qualification[] };
 
@@ -63,7 +64,7 @@ export default function Page() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
           <p className="text-sm text-[var(--color-muted)] mt-1">
-            Click any status pill to cycle <span className="dot dot-incomplete"></span> → <span className="dot dot-in_progress"></span> → <span className="dot dot-done"></span>.
+            Click any colored cell or status pill to cycle <span className="dot dot-incomplete"></span> → <span className="dot dot-in_progress"></span> → <span className="dot dot-done"></span>.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -79,6 +80,12 @@ export default function Page() {
         <Kpi label="In progress" value={stats.ip} tone="in_progress" />
         <Kpi label="Incomplete" value={stats.inc} tone="incomplete" />
       </section>
+
+      {data && data.teachers.length > 0 && (
+        <section className="mb-6">
+          <TeacherGrid teachers={data.teachers} busyId={busyId} onCycle={cycleStatus} />
+        </section>
+      )}
 
       {data && data.teachers.length === 0 && (
         <div className="card text-center text-[var(--color-muted)]">
