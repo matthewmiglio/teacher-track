@@ -175,7 +175,7 @@ export default function ManagePage() {
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {t.assignments.map(a => (
-                    <span key={a.id} className="status-pill status-incomplete" style={{ background: "#f8fafc", color: "#0f172a", borderColor: "#e2e8f0" }}>
+                    <span key={a.id} className="status-pill" style={{ background: "var(--panel-2)", color: "var(--foreground)", borderColor: "var(--border)" }}>
                       {a.qualification?.name ?? "—"}
                       <button onClick={() => unassign(a.id)} className="ml-1 text-[var(--color-negative)] hover:underline text-xs">×</button>
                     </span>

@@ -83,7 +83,7 @@ export default function Page() {
 
       {data && data.teachers.length > 0 && (
         <section className="mb-6">
-          <TeacherGrid teachers={data.teachers} busyId={busyId} onCycle={cycleStatus} />
+          <TeacherGrid teachers={data.teachers} qualifications={data.qualifications} busyId={busyId} onCycle={cycleStatus} />
         </section>
       )}
 

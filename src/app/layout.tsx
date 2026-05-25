@@ -15,7 +15,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <nav className="border-b border-[var(--color-border)] bg-white/80 backdrop-blur sticky top-0 z-10">
+        <nav className="border-b border-[var(--color-border)] bg-[var(--background)]/80 backdrop-blur sticky top-0 z-10">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex items-center justify-between flex-wrap gap-3">
             <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
               <span className="inline-block w-2.5 h-2.5 rounded-full bg-[var(--color-brand-primary)]" />
