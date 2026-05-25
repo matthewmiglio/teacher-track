@@ -39,20 +39,22 @@ export function TeacherGrid({ teachers, qualifications, busyId, onCycle }: Props
       <div className="card-title">Teacher progress grid</div>
 
       <div className="inline-block min-w-full">
-        {/* Header row: name spacer + rotated qualification labels */}
-        <div className="flex items-end gap-1.5 mb-2 pl-[var(--name-col,160px)]" style={{ ["--name-col" as string]: "160px" }}>
+        {/* Header row: name spacer + vertical qualification labels */}
+        <div className="flex items-end gap-1.5 mb-2" style={{ paddingLeft: 160 }}>
           {cols.map(q => (
             <div
               key={q.id}
-              className="w-10 sm:w-12 flex justify-center"
-              style={{ height: 100 }}
+              className="w-8 sm:w-9 flex justify-center items-end"
+              style={{ height: 110 }}
             >
               <div
-                className="text-xs text-[var(--color-muted)] whitespace-nowrap overflow-hidden text-ellipsis origin-bottom-left"
+                className="text-xs text-[var(--color-muted)] overflow-hidden whitespace-nowrap text-ellipsis"
                 style={{
-                  transform: "rotate(-55deg) translateY(8px)",
-                  width: 120,
-                  textAlign: "left",
+                  writingMode: "vertical-rl",
+                  transform: "rotate(180deg)",
+                  maxHeight: 104,
+                  lineHeight: 1,
+                  paddingBottom: 2,
                 }}
                 title={q.name}
               >
@@ -81,7 +83,7 @@ export function TeacherGrid({ teachers, qualifications, busyId, onCycle }: Props
                     return (
                       <div
                         key={q.id}
-                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-md"
+                        className="w-8 h-8 sm:w-9 sm:h-9 rounded-md"
                         style={{
                           backgroundColor: "#3a3a4a",
                           border: "2px solid var(--cell-border)",
@@ -99,7 +101,7 @@ export function TeacherGrid({ teachers, qualifications, busyId, onCycle }: Props
                       onClick={() => onCycle(a.id, a.status)}
                       title={`${q.name} — ${STATUS_LABEL[a.status]} (click → ${STATUS_LABEL[NEXT[a.status]]})`}
                       aria-label={`${t.name} ${q.name}: ${STATUS_LABEL[a.status]}`}
-                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-md transition hover:scale-105 active:scale-95 disabled:opacity-50"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-md transition hover:scale-105 active:scale-95 disabled:opacity-50"
                       style={{
                         backgroundColor: CELL_BG[a.status],
                         border: "2px solid var(--cell-border)",
