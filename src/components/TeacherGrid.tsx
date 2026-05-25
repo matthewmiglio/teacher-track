@@ -34,6 +34,20 @@ export function TeacherGrid({ teachers, qualifications, busyId, onCycle }: Props
     .filter(q => assignedQualIds.has(q.id))
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  // Completion score: done = 1.0, in_progress = 0.5, incomplete = 0. Sort least → most complete (more complete sinks to bottom).
+  function progressPct(t: TeacherWithAssignments): number {
+    if (t.assignments.length === 0) return 0;
+    const score = t.assignments.reduce(
+      (s, a) => s + (a.status === "done" ? 1 : a.status === "in_progress" ? 0.5 : 0),
+      0
+    );
+    return score / t.assignments.length;
+  }
+  const sortedTeachers = [...teachers].sort((a, b) => {
+    const diff = progressPct(a) - progressPct(b);
+    return diff !== 0 ? diff : a.name.localeCompare(b.name);
+  });
+
   return (
     <div className="card overflow-x-auto">
       <div className="card-title">Teacher progress grid</div>
@@ -64,18 +78,20 @@ export function TeacherGrid({ teachers, qualifications, busyId, onCycle }: Props
           ))}
         </div>
 
-        {/* Teacher rows */}
+        {/* Teacher rows — sorted by completion, lowest at top */}
         <div className="flex flex-col gap-1.5">
-          {teachers.map(t => {
+          {sortedTeachers.map(t => {
             const byQual = new Map(t.assignments.map(a => [a.qualification_id, a]));
+            const pct = Math.round(progressPct(t) * 100);
             return (
               <div key={t.id} className="flex items-center gap-1.5">
                 <div
-                  className="text-sm font-medium text-[var(--foreground)] truncate shrink-0 pr-3"
+                  className="text-sm font-medium text-[var(--foreground)] truncate shrink-0 pr-2 flex items-center gap-2"
                   style={{ width: 160 }}
                   title={t.email ?? undefined}
                 >
-                  {t.name}
+                  <span className="truncate">{t.name}</span>
+                  <span className="text-[10px] text-[var(--color-muted)] tabular-nums shrink-0">{pct}%</span>
                 </div>
                 {cols.map(q => {
                   const a = byQual.get(q.id);
