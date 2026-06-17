@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   }
   const sb = supabaseService();
   const { data, error } = await sb
-    .from("teacher_qualifications")
+    .from("Teacher_track_teacher_qualifications")
     .insert({ teacher_id, qualification_id, status: "incomplete" })
     .select()
     .single();

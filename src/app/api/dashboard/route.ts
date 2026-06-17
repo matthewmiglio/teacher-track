@@ -4,9 +4,9 @@ import { supabaseService } from "@/lib/supabase";
 export async function GET() {
   const sb = supabaseService();
   const [teachersRes, qualsRes, assignsRes] = await Promise.all([
-    sb.from("teachers").select("*").order("name"),
-    sb.from("qualifications").select("*").order("name"),
-    sb.from("teacher_qualifications").select("*"),
+    sb.from("Teacher_track_teachers").select("*").order("name"),
+    sb.from("Teacher_track_qualifications").select("*").order("name"),
+    sb.from("Teacher_track_teacher_qualifications").select("*"),
   ]);
   if (teachersRes.error) return NextResponse.json({ error: teachersRes.error.message }, { status: 500 });
   if (qualsRes.error) return NextResponse.json({ error: qualsRes.error.message }, { status: 500 });

@@ -10,7 +10,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (!STATUSES.has(status)) return NextResponse.json({ error: "invalid status" }, { status: 400 });
   const sb = supabaseService();
   const { data, error } = await sb
-    .from("teacher_qualifications")
+    .from("Teacher_track_teacher_qualifications")
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", id)
     .select()
@@ -22,7 +22,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const sb = supabaseService();
-  const { error } = await sb.from("teacher_qualifications").delete().eq("id", id);
+  const { error } = await sb.from("Teacher_track_teacher_qualifications").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }
